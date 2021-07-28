@@ -10,18 +10,13 @@ namespace Altamira.Data.DTOs
 {
     public class UserUpdateDTO
     {
-        [Required]
         public string Name { get; set; }
-        [Required]
         public string Username { get; set; }
-        [Required]
         public string Email { get; set; }
-        [Required]
         public string Phone { get; set; }
-        [Required]
         public string Website { get; set; }
         // foreign keys
-        public Address Address { get; set; }
-        public Company Company { get; set; }
+        public AddressUpdateDTO Address { get; set; }
+        public CompanyUpdateDTO Company { get; set; }
     }
 }

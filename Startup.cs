@@ -25,6 +25,7 @@ namespace Altamira
             services.AddDbContext<AltamiraContext>
                (opt => opt.UseSqlServer(Configuration["Data:SqlCon:ConnectionString"], x => x.UseNetTopologySuite())); // DBContext is added to connect to DB, plus NetTopology is used for Geo location
             services.AddScoped<IAltamiraRepo, AltamiraRepo>();
+            services.AddAutoMapper(typeof(Startup));
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
