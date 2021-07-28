@@ -55,6 +55,11 @@ namespace Altamira.Data
             return (_ctx.SaveChanges() > 0);
         }
 
+        public void UpdateUser(User usr)
+        {
+            // TODO PUT(UPDATE) thingy
+        }
+
 
 
         // TODO DTOs for POST actions probably

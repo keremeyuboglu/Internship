@@ -1,5 +1,7 @@
 ﻿using Altamira.Data;
+using Altamira.Data.DTOs;
 using Altamira.Data.Entities;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -14,10 +16,12 @@ namespace Altamira.Controllers
     public class UserController : Controller
     {
         private readonly IAltamiraRepo _repo;
+        private readonly IMapper _mapper;
 
-        public UserController(IAltamiraRepo repo) // Connection to the repo should be stored to manipulate data
+        public UserController(IAltamiraRepo repo, IMapper mapper) // Connection to the repo should be stored to manipulate data
         {
             _repo = repo;
+            _mapper = mapper;
         }
 
         // BOILERPLATE CODE 
@@ -51,8 +55,20 @@ namespace Altamira.Controllers
 
         // PUT api/<ValuesController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public ActionResult Put(int id, [FromBody] UserUpdateDTO userDTO)
         {
+            User usr = _repo.GetUserById(id);
+            if(usr == null)
+            {
+                return BadRequest();
+            }
+            _mapper.Map(userDTO, usr);
+
+            _repo.UpdateUser(usr);
+
+            _repo.SaveChanges();
+
+            return Ok();
         }
 
         // DELETE api/<ValuesController>/5

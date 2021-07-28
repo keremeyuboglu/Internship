@@ -11,5 +11,6 @@ namespace Altamira.Data
         public void DeleteUser(User user);
 
         bool SaveChanges();
+        void UpdateUser(User usr);
     }
 }
