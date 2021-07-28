@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Geometries;
+using Newtonsoft.Json;
 
 namespace Altamira.Data.Entities
 {
@@ -11,6 +12,16 @@ namespace Altamira.Data.Entities
         public string Suite { get; set; }
         public string City { get; set; }
         public string Zipcode { get; set; }
-        public Point Coordinate { get; set; }
+        [JsonProperty(PropertyName = "geo")]
+        public Coordinate Coordinate { get; set; }
+    }
+
+    public class Coordinate
+    {
+        public int Id { get; set; }
+        [JsonProperty(PropertyName = "lat")]
+        public string Latitude { get; set; }
+        [JsonProperty(PropertyName = "lng")]
+        public string Longtitude { get; set; }
     }
 }

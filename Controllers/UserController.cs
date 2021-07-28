@@ -1,4 +1,5 @@
 ﻿using Altamira.Data;
+using Altamira.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -23,22 +24,29 @@ namespace Altamira.Controllers
 
         // GET: api/<ValuesController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IEnumerable<User> Get()
         {
-            return new string[] { "value1", "value2" };
+            IEnumerable<User> users = _repo.GetUsers();
+            return users;
         }
 
         // GET api/<ValuesController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public User Get(int id)
         {
-            return "value";
+            User user = _repo.GetUserById(id);
+            return user;
         }
 
-        // POST api/<ValuesController>
+        // POST 
+        // Since the User object has different name from seed json, some json keys should be changed via DTOs probably
         [HttpPost]
-        public void Post([FromBody] string value)
+        public ActionResult Post([FromBody] User usr)
         {
+            _repo.AddUser(usr);
+            _repo.SaveChanges();
+            
+            return Ok();
         }
 
         // PUT api/<ValuesController>/5
@@ -49,8 +57,16 @@ namespace Altamira.Controllers
 
         // DELETE api/<ValuesController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public ActionResult Delete(int id)
         {
+            User user = _repo.GetUserById(id);
+            if(user == null)
+            {
+                return NotFound();
+            }
+            _repo.DeleteUser(user);
+            _repo.SaveChanges();
+            return Ok();
         }
     }
 }

@@ -1,3 +1,4 @@
+using Altamira.Data;
 using Altamira.Data.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -23,6 +24,7 @@ namespace Altamira
         {
             services.AddDbContext<AltamiraContext>
                (opt => opt.UseSqlServer(Configuration["Data:SqlCon:ConnectionString"], x => x.UseNetTopologySuite())); // DBContext is added to connect to DB, plus NetTopology is used for Geo location
+            services.AddScoped<IAltamiraRepo, AltamiraRepo>();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -35,6 +37,8 @@ namespace Altamira
         {
             if (env.IsDevelopment())
             {
+                var data = System.IO.File.ReadAllText(@"seed.json");
+                Seeder.Seed(data, app.ApplicationServices);
                 // USING SWAGGER API
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();

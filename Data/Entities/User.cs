@@ -10,8 +10,9 @@ namespace Altamira.Data.Entities
 {
     public class User
     {
-        // Surrogate key and properties
+        // non-Surrogate key and properties
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
         public string Name { get; set; }
         public string Username { get; set; }

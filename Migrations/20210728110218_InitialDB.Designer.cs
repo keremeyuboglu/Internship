@@ -6,12 +6,11 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using NetTopologySuite.Geometries;
 
 namespace Altamira.Migrations
 {
     [DbContext(typeof(AltamiraContext))]
-    [Migration("20210727151926_InitialDB")]
+    [Migration("20210728110218_InitialDB")]
     partial class InitialDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,8 +31,8 @@ namespace Altamira.Migrations
                     b.Property<string>("City")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Point>("Coordinate")
-                        .HasColumnType("geography");
+                    b.Property<int?>("CoordinateId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Street")
                         .HasColumnType("nvarchar(max)");
@@ -45,6 +44,8 @@ namespace Altamira.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CoordinateId");
 
                     b.ToTable("Address");
                 });
@@ -70,12 +71,28 @@ namespace Altamira.Migrations
                     b.ToTable("Company");
                 });
 
-            modelBuilder.Entity("Altamira.Data.Entities.User", b =>
+            modelBuilder.Entity("Altamira.Data.Entities.Coordinate", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Latitude")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Longtitude")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Coordinate");
+                });
+
+            modelBuilder.Entity("Altamira.Data.Entities.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
 
                     b.Property<int?>("AddressId")
                         .HasColumnType("int");
@@ -108,6 +125,15 @@ namespace Altamira.Migrations
                     b.HasIndex("CompanyId");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Altamira.Data.Entities.Address", b =>
+                {
+                    b.HasOne("Altamira.Data.Entities.Coordinate", "Coordinate")
+                        .WithMany()
+                        .HasForeignKey("CoordinateId");
+
+                    b.Navigation("Coordinate");
                 });
 
             modelBuilder.Entity("Altamira.Data.Entities.User", b =>
