@@ -30,28 +30,36 @@ namespace Altamira.Controllers
 
         // GET: api/<ValuesController>
         [HttpGet]
-        public IEnumerable<User> Get()
+        public ActionResult<IEnumerable<User>> GetAllUsers()
         {
             IEnumerable<User> users = _repo.GetUsers();
-            return users;
+            if (!users.Any())
+            {
+                return NotFound();
+            }
+            return Ok(users);
         }
 
         // GET api/<ValuesController>/5
         [HttpGet("{id}")]
-        public User Get(int id)
+        public ActionResult GetUser(int id)
         {
             User user = _repo.GetUserById(id);
-            return user;
+            if(user == null)
+            {
+                return NotFound();
+            }
+            return Ok(user);
         }
 
         // POST 
         // Since the User object has different name from seed json, some json keys should be changed via DTOs probably
         [HttpPost]
-        public ActionResult Post([FromBody] UserPostDTO userDTO)
+        public ActionResult PostUser([FromBody] UserPostDTO userDTO)
         {
             User usr = _mapper.Map<UserPostDTO, User>(userDTO);
 
-            _repo.UpdateUser(usr);
+            _repo.AddUser(usr);
 
             _repo.SaveChanges();
 
