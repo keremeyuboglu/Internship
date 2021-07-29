@@ -4,6 +4,7 @@ using Altamira.Data.DTOs.Post;
 using Altamira.Data.DTOs.Update;
 using Altamira.Data.Entities;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -26,9 +27,7 @@ namespace Altamira.Controllers
             _mapper = mapper;
         }
 
-        // BOILERPLATE CODE 
-
-        // GET: api/<ValuesController>
+        [Authorize]
         [HttpGet]
         public ActionResult<IEnumerable<User>> GetAllUsers()
         {
@@ -40,6 +39,7 @@ namespace Altamira.Controllers
             return Ok(users);
         }
 
+        [Authorize]
         // GET api/<ValuesController>/5
         [HttpGet("{id}")]
         public ActionResult GetUser(int id)
@@ -52,39 +52,46 @@ namespace Altamira.Controllers
             return Ok(user);
         }
 
-        // POST 
-        // Since the User object has different name from seed json, some json keys should be changed via DTOs probably
+        [Authorize]
         [HttpPost]
         public ActionResult PostUser([FromBody] UserPostDTO userDTO)
         {
-            User usr = _mapper.Map<UserPostDTO, User>(userDTO);
+            if (ModelState.IsValid)
+            {
+                User usr = _mapper.Map<UserPostDTO, User>(userDTO);
 
-            _repo.AddUser(usr);
+                _repo.AddUser(usr);
 
-            _repo.SaveChanges();
+                _repo.SaveChanges();
 
-            return Ok();
+                return Ok();
+            }
+            return BadRequest();
         }
 
-        // PUT api/<ValuesController>/5
+        [Authorize]
         [HttpPut("{id}")]
         public ActionResult Put(int id, [FromBody] UserUpdateDTO userDTO)
         {
-            User usr = _repo.GetUserById(id);
-            if(usr == null)
+            if (ModelState.IsValid)
             {
-                return BadRequest();
+                User usr = _repo.GetUserById(id);
+                if (usr == null)
+                {
+                    return BadRequest();
+                }
+                _mapper.Map(userDTO, usr);
+
+                _repo.UpdateUser(usr);
+
+                _repo.SaveChanges();
+
+                return Ok();
             }
-            _mapper.Map(userDTO, usr);
-
-            _repo.UpdateUser(usr);
-
-            _repo.SaveChanges();
-
-            return Ok();
+            return BadRequest();
         }
 
-        // DELETE api/<ValuesController>/5
+        [Authorize]
         [HttpDelete("{id}")]
         public ActionResult Delete(int id)
         {
