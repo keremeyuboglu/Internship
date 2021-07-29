@@ -12,5 +12,7 @@ namespace Altamira.Data
 
         bool SaveChanges();
         void UpdateUser(User usr);
+
+        public IEnumerable<User> GetUsersForLogin();
     }
 }
