@@ -1,4 +1,5 @@
-﻿using Altamira.Data.Entities;
+﻿using Altamira.Data.DTOs;
+using Altamira.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -55,10 +56,20 @@ namespace Altamira.Data
             return (_ctx.SaveChanges() > 0);
         }
 
+        public IEnumerable<User> GetUsersForLogin()
+        {
+            return _ctx.Users.ToList();
+        }
+
         public void UpdateUser(User usr)
         {
-            // TODO PUT(UPDATE) thingy
+            throw new NotImplementedException();
         }
+
+        //public void UpdateUser(User usr)
+        //{
+        //    // TODO PUT(UPDATE) thingy
+        //}
 
 
 

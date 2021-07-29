@@ -27,10 +27,9 @@ namespace Altamira
                 {
                     using (var transaction = context.Database.BeginTransaction())
                     {
+                        users.ForEach(u => u.Id = 0);
                         context.AddRange(users);
-                        context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT Users ON;");
                         context.SaveChanges();
-                        context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT Users OFF");
                         transaction.Commit();
                     }
 

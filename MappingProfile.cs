@@ -24,6 +24,7 @@ namespace Altamira
             CreateMap<CoordinateUpdateDTO, Coordinate>().ReverseMap();
             CreateMap<CompanyPostDTO, Company>().ReverseMap();
             CreateMap<CompanyUpdateDTO, Company>().ReverseMap();
+            CreateMap<User, LoginModel>().ReverseMap();
         }
     }
 }
