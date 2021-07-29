@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Altamira.Data.DTOs
+namespace Altamira.Data.DTOs.Update
 {
     public class UserUpdateDTO
     {

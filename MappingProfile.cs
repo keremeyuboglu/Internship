@@ -1,4 +1,6 @@
 ﻿using Altamira.Data.DTOs;
+using Altamira.Data.DTOs.Post;
+using Altamira.Data.DTOs.Update;
 using Altamira.Data.Entities;
 using AutoMapper;
 using System;
@@ -14,7 +16,14 @@ namespace Altamira
         public MappingProfile()
         {
             // TODO something about updating is not right, returns null values for unupdated properties
-            CreateMap<UserUpdateDTO, User>();
+            CreateMap<UserPostDTO, User>().ReverseMap();
+            CreateMap<UserUpdateDTO, User>().ReverseMap();
+            CreateMap<AddressPostDTO, Address>().ReverseMap();
+            CreateMap<AddressUpdateDTO, Address>().ReverseMap();
+            CreateMap<CoordinatePostDTO, Coordinate>().ReverseMap();
+            CreateMap<CoordinateUpdateDTO, Coordinate>().ReverseMap();
+            CreateMap<CompanyPostDTO, Company>().ReverseMap();
+            CreateMap<CompanyUpdateDTO, Company>().ReverseMap();
         }
     }
 }

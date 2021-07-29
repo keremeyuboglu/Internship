@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Altamira.Migrations
 {
     [DbContext(typeof(AltamiraContext))]
-    [Migration("20210728110218_InitialDB")]
+    [Migration("20210729080258_InitialDB")]
     partial class InitialDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -92,7 +92,9 @@ namespace Altamira.Migrations
             modelBuilder.Entity("Altamira.Data.Entities.User", b =>
                 {
                     b.Property<int>("Id")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int?>("AddressId")
                         .HasColumnType("int");

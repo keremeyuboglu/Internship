@@ -1,4 +1,5 @@
 ﻿using Altamira.Data.Entities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using System;
@@ -24,8 +25,15 @@ namespace Altamira
                               .ServiceProvider.GetService<AltamiraContext>();
                 if (!context.Users.Any())
                 {
-                    context.AddRange(users);
-                    context.SaveChanges();
+                    using (var transaction = context.Database.BeginTransaction())
+                    {
+                        context.AddRange(users);
+                        context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT Users ON;");
+                        context.SaveChanges();
+                        context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT Users OFF");
+                        transaction.Commit();
+                    }
+
                 }
             }
         }

@@ -5,13 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Altamira.Data.DTOs
+namespace Altamira.Data.DTOs.Post
 {
-    public class CompanyUpdateDTO
+    public class CompanyPostDTO
     {
         public string Name { get; set; }
         public string CatchPhrase { get; set; }
         [JsonProperty(PropertyName = "bs")]
         public string Business { get; set; }
+
     }
 }

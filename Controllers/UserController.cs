@@ -1,5 +1,7 @@
 ﻿using Altamira.Data;
 using Altamira.Data.DTOs;
+using Altamira.Data.DTOs.Post;
+using Altamira.Data.DTOs.Update;
 using Altamira.Data.Entities;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -45,11 +47,14 @@ namespace Altamira.Controllers
         // POST 
         // Since the User object has different name from seed json, some json keys should be changed via DTOs probably
         [HttpPost]
-        public ActionResult Post([FromBody] User usr)
+        public ActionResult Post([FromBody] UserPostDTO userDTO)
         {
-            _repo.AddUser(usr);
+            User usr = _mapper.Map<UserPostDTO, User>(userDTO);
+
+            _repo.UpdateUser(usr);
+
             _repo.SaveChanges();
-            
+
             return Ok();
         }
 

@@ -12,7 +12,6 @@ namespace Altamira.Data.Entities
     {
         // non-Surrogate key and properties
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
         public string Name { get; set; }
         public string Username { get; set; }
