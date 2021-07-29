@@ -6,6 +6,9 @@ using Altamira.Data.Entities;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,11 +23,13 @@ namespace Altamira.Controllers
     {
         private readonly IAltamiraRepo _repo;
         private readonly IMapper _mapper;
+        private readonly IDistributedCache _cache;
 
-        public UserController(IAltamiraRepo repo, IMapper mapper) // Connection to the repo should be stored to manipulate data
+        public UserController(IAltamiraRepo repo, IMapper mapper, IDistributedCache cache) // Connection to the repo should be stored to manipulate data
         {
             _repo = repo;
             _mapper = mapper;
+            _cache = cache;
         }
 
         [Authorize]
@@ -42,8 +47,28 @@ namespace Altamira.Controllers
         [Authorize]
         // GET api/<ValuesController>/5
         [HttpGet("{id}")]
-        public ActionResult GetUser(int id)
+        public async Task<ActionResult> GetUser(int id)
         {
+
+            string json;
+            User usr;
+            var userFromCache = await _cache.GetAsync(id.ToString());
+            if(userFromCache != null)
+            {
+                json = Encoding.UTF8.GetString(userFromCache);
+                usr = JsonConvert.DeserializeObject<User>(json);
+            }
+            else
+            {
+                usr = await Task.Run(() => _repo.GetUserById(id));
+                json = JsonConvert.SerializeObject(usr);
+                userFromCache = Encoding.UTF8.GetBytes(json);
+                var options = new DistributedCacheEntryOptions()
+                        .SetSlidingExpiration(TimeSpan.FromDays(1))
+                        .SetAbsoluteExpiration(DateTime.Now.AddMonths(1)); 
+                await _cache.SetAsync(id.ToString(), userFromCache, options);
+
+            }
             User user = _repo.GetUserById(id);
             if(user == null)
             {

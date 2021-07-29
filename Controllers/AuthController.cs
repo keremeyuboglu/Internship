@@ -38,7 +38,7 @@ namespace Altamira.Controllers
             if (user != null)
             {
                 var token = GenerateJSONWebToken(user);
-                return Ok(new { token = token, expiration = token.ValidTo});
+                return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token), expiration = token.ValidTo});
             }
             else
             {

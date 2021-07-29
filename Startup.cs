@@ -41,6 +41,11 @@ namespace Altamira
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtToken:Key"]))
                     };
                 });
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = Configuration.GetConnectionString("Redis");
+                options.InstanceName = "RedisDemo_Altamira";
+            });
             services.AddScoped<IAltamiraRepo, AltamiraRepo>();
             services.AddAutoMapper(typeof(Startup));
             services.AddControllers();
