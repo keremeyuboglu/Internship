@@ -44,35 +44,32 @@ namespace Altamira.Controllers
             return Ok(users);
         }
 
-        [Authorize]
+       // [Authorize]
         // GET api/<ValuesController>/5
         [HttpGet("{id}")]
         public async Task<ActionResult> GetUser(int id)
         {
 
             string json;
-            User usr;
+            User user;
             var userFromCache = await _cache.GetAsync(id.ToString());
             if(userFromCache != null)
             {
                 json = Encoding.UTF8.GetString(userFromCache);
-                usr = JsonConvert.DeserializeObject<User>(json);
+                user = JsonConvert.DeserializeObject<User>(json);
             }
             else
             {
-                usr = await Task.Run(() => _repo.GetUserById(id));
-                json = JsonConvert.SerializeObject(usr);
+                user = await Task.Run(() => _repo.GetUserById(id));
+                if (user == null)
+                {
+                    return NotFound();
+                }
+                json = JsonConvert.SerializeObject(user);
                 userFromCache = Encoding.UTF8.GetBytes(json);
                 var options = new DistributedCacheEntryOptions()
-                        .SetSlidingExpiration(TimeSpan.FromDays(1))
-                        .SetAbsoluteExpiration(DateTime.Now.AddMonths(1)); 
+                        .SetAbsoluteExpiration(TimeSpan.FromSeconds(60));
                 await _cache.SetAsync(id.ToString(), userFromCache, options);
-
-            }
-            User user = _repo.GetUserById(id);
-            if(user == null)
-            {
-                return NotFound();
             }
             return Ok(user);
         }
@@ -116,17 +113,29 @@ namespace Altamira.Controllers
             return BadRequest();
         }
 
-        [Authorize]
+     //   [Authorize]
         [HttpDelete("{id}")]
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            User user = _repo.GetUserById(id);
-            if(user == null)
+            string json;
+            User user;
+            // DELETE IF EXIST IN CACHE
+            var userFromCache = await _cache.GetAsync(id.ToString());
+            if (userFromCache != null)
+            {
+                json = Encoding.UTF8.GetString(userFromCache);
+                user = JsonConvert.DeserializeObject<User>(json);
+                await _cache.RemoveAsync(id.ToString());
+            }
+            // DELETE FROM DATABASE
+            user = await Task.Run(() => _repo.GetUserById(id));
+            if (user == null)
             {
                 return NotFound();
             }
             _repo.DeleteUser(user);
             _repo.SaveChanges();
+            
             return Ok();
         }
     }
