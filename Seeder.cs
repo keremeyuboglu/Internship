@@ -23,7 +23,8 @@ namespace Altamira
             {
                 var context = serviceScope
                               .ServiceProvider.GetService<AltamiraContext>();
-                if (!context.Users.Any())
+                context.Database.Migrate();
+              if (!context.Users.Any())
                 {
                     using (var transaction = context.Database.BeginTransaction())
                     {

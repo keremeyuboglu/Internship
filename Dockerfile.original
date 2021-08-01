@@ -8,11 +8,10 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
 COPY ["Altamira.csproj", "."]
-RUN dotnet restore "Altamira.csproj"
+RUN dotnet restore "./Altamira.csproj"
 COPY . .
-WORKDIR "/src/"
+WORKDIR "/src/."
 RUN dotnet build "Altamira.csproj" -c Release -o /app/build
-RUN dotnet ef database update # Database docker image should've been started up already, with this command I am 
 
 FROM build AS publish
 RUN dotnet publish "Altamira.csproj" -c Release -o /app/publish
@@ -21,3 +20,6 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Altamira.dll"]
+
+RUN chmod +x ./entrypoint.sh
+CMD /bin/bash ./entrypoint.sh
