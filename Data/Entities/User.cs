@@ -17,12 +17,16 @@ namespace Altamira.Data.Entities
         public string Username { get; set; }
 
         public string Password { get; set; } = "p@ssword."; // DUMMY DEFAULT PASSWORD
+        [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
-
+        [DataType(DataType.PhoneNumber)]
         public string Phone { get; set; }
+        [DataType(DataType.Url)]
         public string Website { get; set; }
         // foreign keys
+        [Required]
         public Address Address { get; set; }
+        [Required]
         public Company Company { get; set; }
     }
 }

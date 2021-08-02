@@ -12,7 +12,9 @@ RUN dotnet restore "Altamira.csproj"
 COPY . .
 WORKDIR "/src/"
 RUN dotnet build "Altamira.csproj" -c Release -o /app/build
-RUN dotnet ef database update # Database docker image should've been started up already, with this command I am 
+#RUN dotnet tool install --global dotnet-ef
+#ENV PATH="${PATH}:/root/.dotnet/tools"
+#RUN dotnet ef database update # Database docker image should've been started up already, with this command I am 
 
 FROM build AS publish
 RUN dotnet publish "Altamira.csproj" -c Release -o /app/publish

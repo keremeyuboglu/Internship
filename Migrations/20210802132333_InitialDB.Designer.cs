@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Altamira.Migrations
 {
     [DbContext(typeof(AltamiraContext))]
-    [Migration("20210729080258_InitialDB")]
+    [Migration("20210802132333_InitialDB")]
     partial class InitialDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

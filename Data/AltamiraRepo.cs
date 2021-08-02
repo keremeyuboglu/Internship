@@ -63,7 +63,7 @@ namespace Altamira.Data
 
         public void UpdateUser(User usr)
         {
-            throw new NotImplementedException();
+            return;
         }
 
         //public void UpdateUser(User usr)
