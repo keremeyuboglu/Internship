@@ -2,6 +2,7 @@
 using Altamira.Data.DTOs.Update;
 using Altamira.Data.Entities;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
@@ -29,6 +30,7 @@ namespace Altamira.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<ActionResult> UpdateCompanyOfUser(int id, [FromBody] CompanyUpdateDTO companyDTO)
         {
             if (ModelState.IsValid)
