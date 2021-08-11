@@ -33,17 +33,21 @@ namespace Altamira.Controllers
         [HttpPost]
         public IActionResult Login([FromBody] LoginModel login)
         {
-            var user = AuthenticateUser(login);
+            if (ModelState.IsValid)
+            {
+                var user = AuthenticateUser(login);
 
-            if (user != null)
-            {
-                var token = GenerateJSONWebToken(user);
-                return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token), expiration = token.ValidTo});
+                if (user != null)
+                {
+                    var token = GenerateJSONWebToken(user);
+                    return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token), expiration = token.ValidTo });
+                }
+                else
+                {
+                    return BadRequest("The credentials are wrong");
+                }
             }
-            else
-            {
-                return BadRequest("The credentials are wrong");
-            }
+            return BadRequest("Invalid Model");
         }
 
         private JwtSecurityToken GenerateJSONWebToken(LoginModel userInfo)

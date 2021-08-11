@@ -51,7 +51,7 @@ namespace Altamira.Controllers
 
             string json;
             User user;
-            var userFromCache = await _cache.GetAsync(id.ToString());
+            var userFromCache = await _cache.GetAsync((typeof(User).Name + id.ToString()));
             if(userFromCache != null)
             {
                 json = Encoding.UTF8.GetString(userFromCache);
@@ -75,30 +75,33 @@ namespace Altamira.Controllers
 
         [Authorize]
         [HttpPost]
-        public ActionResult PostUser([FromBody] UserPostDTO userDTO)
+        public async Task<ActionResult> AddUserAsync([FromBody] UserPostDTO userDTO)
         {
             if (ModelState.IsValid)
             {
                 User usr = _mapper.Map<UserPostDTO, User>(userDTO);
-
+                var options = new DistributedCacheEntryOptions()
+                        .SetAbsoluteExpiration(TimeSpan.FromSeconds(600));
                 _repo.AddUser(usr);
-
                 _repo.SaveChanges();
-
+                string json = JsonConvert.SerializeObject(usr);
+                var userFromCache = Encoding.UTF8.GetBytes(json);
+                var id = usr.Id;
+                await _cache.SetAsync((typeof(User).Name + id.ToString()), userFromCache, options);
                 return Ok();
             }
-            return BadRequest();
+            return BadRequest("Invalid Model");
         }
 
         [Authorize]
         [HttpPut("{id}")]
-        public async Task<ActionResult> Put(int id, [FromBody] UserUpdateDTO userDTO)
+        public async Task<ActionResult> UpdateUser(int id, [FromBody] UserUpdateDTO userDTO)
         {
             if (ModelState.IsValid)
             {
                 string json;
                 User user;
-                var userFromCache = await _cache.GetAsync(id.ToString());
+                var userFromCache = await _cache.GetAsync((typeof(User).Name + id.ToString()));
                 if (userFromCache != null)
                 {
                     await _cache.RemoveAsync(typeof(User).Name + id.ToString());
@@ -109,9 +112,6 @@ namespace Altamira.Controllers
                     return BadRequest("That user doesn't exist.");
                 }
                 _mapper.Map(userDTO, user);
-
-          //      _repo.UpdateUser(user);
-
                 _repo.SaveChanges();
 
                 json = JsonConvert.SerializeObject(user);
@@ -127,12 +127,12 @@ namespace Altamira.Controllers
 
         [Authorize]
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> DeleteUser(int id)
         {
             string json;
             User user;
             // DELETE IF EXIST IN CACHE
-            var userFromCache = await _cache.GetAsync(id.ToString());
+            var userFromCache = await _cache.GetAsync((typeof(User).Name + id.ToString()));
             if (userFromCache != null)
             {
                 json = Encoding.UTF8.GetString(userFromCache);
