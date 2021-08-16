@@ -78,7 +78,7 @@ namespace Altamira
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
+            if (env.IsDevelopment() || env.EnvironmentName == "Docker")
             {
                 var data = System.IO.File.ReadAllText(@"seed.json");
                 Seeder.Seed(data, app.ApplicationServices);

@@ -44,7 +44,7 @@ namespace Altamira.Controllers
             return Ok(users);
         }
 
-        [Authorize]
+   //     [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult> GetUser(int id)
         {

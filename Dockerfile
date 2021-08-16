@@ -20,6 +20,7 @@ FROM build AS publish
 RUN dotnet publish "Altamira.csproj" -c Release -o /app/publish
 
 FROM base AS final
+ENV ASPNETCORE_ENVIRONMENT Docker
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Altamira.dll"]
