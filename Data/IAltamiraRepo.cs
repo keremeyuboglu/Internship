@@ -14,5 +14,7 @@ namespace Altamira.Data
         void UpdateUser(User usr);
 
         public IEnumerable<User> GetUsersForLogin();
+
+        public Company GetCompanyById(int id);
     }
 }

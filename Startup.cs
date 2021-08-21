@@ -9,6 +9,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
+using System;
+using System.Reflection;
 using System.Text;
 
 namespace Altamira
@@ -25,6 +28,18 @@ namespace Altamira
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+
+            //var log = new LoggerConfiguration()
+            //    .WriteTo.Elasticsearch(new Serilog.Sinks.Elasticsearch.ElasticsearchSinkOptions
+            //    (new Uri(Configuration["ElasticConfiguration:Uri"]))
+            //    {
+            //        IndexFormat = $"{Assembly.GetExecutingAssembly().GetName().Name.ToLower()}-{DateTime.UtcNow:yyyy-MM}"
+               
+            //    })
+            //    .CreateLogger();
+            //services.AddSingleton(log);
+
             services.AddDbContext<AltamiraContext>
                (opt => opt.UseSqlServer(Configuration["Data:SqlCon:ConnectionString"], x => x.UseNetTopologySuite())); // DBContext is added to connect to DB, plus NetTopology is used for Geo location
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -78,6 +93,34 @@ namespace Altamira
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            /*
+             * 
+             * 
+   
+            string elasticSearchConnectionsStr = string.Empty;
+            string connectionStringByEnvironmentVariables = string.Empty;
+            elasticSearchConnectionsStr = Convert.ToString(Configuration["ConnectionStrings:ElasticSearchConnection"]);
+
+            var log = new LoggerConfiguration()
+                .Enrich.WithThreadId()
+                .Enrich.WithThreadName()
+                .Enrich.WithMachineName()
+                .Enrich.WithEnvironmentUserName()
+                .Enrich.WithExceptionDetails()
+                .Enrich.FromLogContext()
+                .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(elasticSearchConnectionsStr))
+                {
+                    ModifyConnectionSettings = x => x.BasicAuthentication(Configuration["Elastic:User"], Configuration["Elastic:Pass"]),
+                    IndexDecider = (@event, offset) => Configuration["Elastic:Index"],
+                    CustomFormatter = new ElasticsearchJsonFormatter()
+                })
+                .CreateLogger();
+            Log.Information("CondoLife Starting...");
+            services.AddSingleton(log);
+
+             */
+
+
             if (env.IsDevelopment() || env.EnvironmentName == "Docker")
             {
                 var data = System.IO.File.ReadAllText(@"seed.json");

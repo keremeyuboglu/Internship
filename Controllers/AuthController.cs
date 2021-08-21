@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Altamira.Data;
+using Microsoft.Extensions.Logging;
 
 namespace Altamira.Controllers
 {
@@ -21,12 +22,14 @@ namespace Altamira.Controllers
         private readonly IConfiguration _config;
         private readonly IMapper _mapper;
         private readonly IAltamiraRepo _repo;
+        private readonly ILogger _logger;
 
-        public AuthController(IConfiguration config, IMapper mapper, IAltamiraRepo repo)
+        public AuthController(IConfiguration config, IMapper mapper, IAltamiraRepo repo, ILogger logger)
         {
             _config = config;
             _mapper = mapper;
             _repo = repo;
+            _logger = logger;
         }
 
         [AllowAnonymous]

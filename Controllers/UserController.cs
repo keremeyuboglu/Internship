@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -24,12 +25,14 @@ namespace Altamira.Controllers
         private readonly IAltamiraRepo _repo;
         private readonly IMapper _mapper;
         private readonly IDistributedCache _cache;
+        private readonly ILogger<UserController> _logger;
 
-        public UserController(IAltamiraRepo repo, IMapper mapper, IDistributedCache cache) // Connection to the repo should be stored to manipulate data
+        public UserController(IAltamiraRepo repo, IMapper mapper, IDistributedCache cache, ILogger<UserController> logger) // Connection to the repo should be stored to manipulate data
         {
             _repo = repo;
             _mapper = mapper;
             _cache = cache;
+            _logger = logger;
         }
 
         [Authorize]

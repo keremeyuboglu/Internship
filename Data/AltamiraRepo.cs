@@ -66,6 +66,14 @@ namespace Altamira.Data
             return;
         }
 
+        public Company GetCompanyById(int id)
+        {
+            var userWithThatCompany = _ctx.Users
+                .Include(c => c.Company)
+                .Where(c => c.Company.Id == id)
+                .FirstOrDefault();
+            return userWithThatCompany.Company;
+        }
         //public void UpdateUser(User usr)
         //{
         //    // TODO PUT(UPDATE) thingy
