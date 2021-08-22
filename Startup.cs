@@ -7,9 +7,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using Serilog.Sinks.Elasticsearch;
 using System;
 using System.Reflection;
 using System.Text;
@@ -35,10 +37,21 @@ namespace Altamira
             //    (new Uri(Configuration["ElasticConfiguration:Uri"]))
             //    {
             //        IndexFormat = $"{Assembly.GetExecutingAssembly().GetName().Name.ToLower()}-{DateTime.UtcNow:yyyy-MM}"
-               
+
             //    })
             //    .CreateLogger();
             //services.AddSingleton(log);
+            Log.Logger = new LoggerConfiguration()
+        .Enrich.FromLogContext()
+        .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(Configuration["ElasticConfiguration:Uri"]))
+        {
+            AutoRegisterTemplate = true,
+            IndexFormat = $"{Assembly.GetExecutingAssembly().GetName().Name.ToLower()}-{DateTime.UtcNow:yyyy-MM-dd}" // index is called altamira-yy-mm-dd
+        })
+        .CreateLogger();
+
+
+
 
             services.AddDbContext<AltamiraContext>
                (opt => opt.UseSqlServer(Configuration["Data:SqlCon:ConnectionString"], x => x.UseNetTopologySuite())); // DBContext is added to connect to DB, plus NetTopology is used for Geo location
@@ -67,6 +80,7 @@ namespace Altamira
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Altamira", Version = "v1" });
+                c.EnableAnnotations();
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,
@@ -91,7 +105,7 @@ namespace Altamira
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             /*
              * 
@@ -120,7 +134,7 @@ namespace Altamira
 
              */
 
-
+            loggerFactory.AddSerilog();
             if (env.IsDevelopment() || env.EnvironmentName == "Docker")
             {
                 var data = System.IO.File.ReadAllText(@"seed.json");

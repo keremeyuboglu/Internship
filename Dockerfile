@@ -24,3 +24,6 @@ ENV ASPNETCORE_ENVIRONMENT Docker
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Altamira.dll"]
+
+COPY sql/wait-for-it.sh /usr/wait-for-it.sh
+RUN chmod +x /usr/wait-for-it.sh

@@ -78,8 +78,9 @@ namespace Altamira.Controllers
         }
 
 
+        
+        [HttpGet("{id}")]
         [SwaggerOperation(Summary = "This endpoint ic created to demonstrate Elasticsearch implementation")]
-        [HttpGet]
         public ActionResult GetCompanyById(int id)
         {
             var compnay = _repo.GetCompanyById(id);
